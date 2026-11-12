@@ -2,9 +2,11 @@
   import { timer } from './lib/timer.svelte';
   import TimerDisplay from './components/TimerDisplay.svelte';
   import Controls from './components/Controls.svelte';
+  import PresetPicker from './components/PresetPicker.svelte';
 </script>
 
 <main class="app" data-phase={timer.phase}>
+  <PresetPicker />
   <TimerDisplay />
   <Controls />
 </main>

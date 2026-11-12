@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Timer } from './timer.svelte';
+import { settings } from './settings.svelte';
 
 const MIN = 60_000;
 
@@ -89,6 +90,27 @@ describe('Timer', () => {
     t.start();
     expect(t.setDurations({ focus: 50, shortBreak: 10, longBreak: 20 })).toBe(false);
     expect(t.durations.focus).toBe(25);
+  });
+
+  it('setPreset changes durations and records the choice', () => {
+    expect(t.setPreset('flow')).toBe(true);
+    expect(t.remaining).toBe(90 * MIN);
+    expect(settings.preset).toBe('flow');
+    t.setPreset('classic');
+  });
+
+  it('setPreset is ignored while running', () => {
+    t.start();
+    expect(t.setPreset('deep')).toBe(false);
+    expect(settings.preset).toBe('classic');
+  });
+
+  it('setCustom saves and selects custom durations', () => {
+    t.setCustom({ focus: 1, shortBreak: 2, longBreak: 3 });
+    expect(settings.preset).toBe('custom');
+    expect(settings.custom).toEqual({ focus: 1, shortBreak: 2, longBreak: 3 });
+    expect(t.remaining).toBe(MIN);
+    t.setPreset('classic');
   });
 
   it('applies duration changes while paused and resets the phase', () => {

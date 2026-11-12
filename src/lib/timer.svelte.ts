@@ -1,7 +1,8 @@
 import { ensureAudio, getAudio } from './audio/engine';
 import { playChime, scheduleChime, type ChimeHandle } from './audio/chime';
 import { formatMs } from './format';
-import { DEFAULT_DURATIONS, PHASE_LABEL, type Durations, type Phase } from './presets';
+import { durationsFor, PHASE_LABEL, type Durations, type Phase, type PresetId } from './presets';
+import { settings } from './settings.svelte';
 
 export type { Phase };
 export type Status = 'idle' | 'running' | 'paused';
@@ -23,13 +24,14 @@ export class Timer {
   status = $state<Status>('idle');
   /** Epoch ms when the current phase ends; set only while running. */
   endTime = $state<number | null>(null);
+  /** Phase lengths in minutes, starting from the saved preset. */
+  durations = $state<Durations>(durationsFor(settings.preset, settings.custom));
   /** Ms left while paused or idle. */
-  pausedRemaining = $state(DEFAULT_DURATIONS.focus * MINUTE);
+  pausedRemaining = $state(this.durations.focus * MINUTE);
   /** Focus sessions finished in this cycle (0..LONG_BREAK_EVERY). */
   completedFocus = $state(0);
   /** Updated by the ticker; drives the derived values. */
   now = $state(Date.now());
-  durations = $state<Durations>({ ...DEFAULT_DURATIONS });
 
   phaseDurationMs = $derived(this.durations[this.phase] * MINUTE);
   remaining = $derived(
@@ -91,6 +93,21 @@ export class Timer {
     if (this.status === 'running') return false;
     this.durations = { ...durations };
     this.reset();
+    return true;
+  };
+
+  /** Pick a preset (or 'custom', which uses the saved custom values). Ignored while running. */
+  setPreset = (preset: PresetId): boolean => {
+    if (!this.setDurations(durationsFor(preset, settings.custom))) return false;
+    settings.preset = preset;
+    return true;
+  };
+
+  /** Set and select custom durations (already validated with clampCustom). Ignored while running. */
+  setCustom = (custom: Durations): boolean => {
+    if (!this.setDurations(custom)) return false;
+    settings.custom = { ...custom };
+    settings.preset = 'custom';
     return true;
   };
 
