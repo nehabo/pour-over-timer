@@ -1,4 +1,4 @@
-import { ensureAudio, getAudio } from './audio/engine';
+import { ensureAudio, getAudio, setAmbient, setVolume } from './audio/engine';
 import { playChime, scheduleChime, type ChimeHandle } from './audio/chime';
 import { formatMs } from './format';
 import { durationsFor, PHASE_LABEL, type Durations, type Phase, type PresetId } from './presets';
@@ -163,7 +163,8 @@ export class Timer {
 export const timer = new Timer();
 
 /**
- * Browser-only wiring: refresh on tab return, and show the time in the tab title.
+ * Browser-only wiring: refresh on tab return, show the time in the tab title,
+ * and keep the ambient sound in step with the timer (it plays only during a running focus phase).
  * Called once from main.ts (kept out of the constructor so unit tests stay DOM-free).
  */
 export function initTimerEffects(): () => void {
@@ -177,6 +178,15 @@ export function initTimerEffects(): () => void {
         timer.status === 'running'
           ? `${formatMs(timer.remaining)} · ${PHASE_LABEL[timer.phase]}`
           : baseTitle;
+    });
+
+    $effect(() => {
+      const active = timer.phase === 'focus' && timer.status === 'running';
+      setAmbient(active ? settings.sound : null);
+    });
+
+    $effect(() => {
+      setVolume(settings.volume);
     });
   });
 
