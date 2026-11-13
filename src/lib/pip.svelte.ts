@@ -12,7 +12,7 @@ const dpip: DocumentPictureInPicture | undefined =
     ? (window as unknown as { documentPictureInPicture: DocumentPictureInPicture }).documentPictureInPicture
     : undefined;
 
-/** True in Chrome and Brave; the PiP button is hidden elsewhere. */
+/** True in Chrome; the PiP button is hidden elsewhere. */
 export const pipSupported = dpip !== undefined;
 
 export const pip = $state({ open: false });
