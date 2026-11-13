@@ -3,11 +3,13 @@ export interface ChimeHandle {
   cancel(): void;
 }
 
+// Café counter bell: two quick, bright high notes with a fast decay.
 const NOTES = [
-  { freq: 880, offset: 0 }, // A5
-  { freq: 1318.5, offset: 0.28 }, // E6
+  { freq: 1568, offset: 0 }, // G6
+  { freq: 2093, offset: 0.13 }, // C7
 ];
-const NOTE_LENGTH = 0.32; // seconds; the whole chime is about 0.6 s
+const ATTACK = 0.005; // seconds; near-instant strike
+const NOTE_LENGTH = 0.45; // decay; the whole chime is about 0.6 s
 const LEVEL = 0.25; // fixed, independent of the ambient volume slider
 
 /**
@@ -29,7 +31,7 @@ export function scheduleChime(ctx: AudioContext, at: number): ChimeHandle {
     const env = ctx.createGain();
     env.gain.value = 0;
     env.gain.setValueAtTime(0, t0);
-    env.gain.linearRampToValueAtTime(1, t0 + 0.02);
+    env.gain.linearRampToValueAtTime(1, t0 + ATTACK);
     env.gain.exponentialRampToValueAtTime(0.001, t0 + NOTE_LENGTH);
 
     osc.connect(env).connect(out);

@@ -23,7 +23,7 @@
 </div>
 
 <style>
-  /* Background tinted by phase so the state reads at a glance. */
+  /* Deep roast during focus, dark moss during breaks; always dark, cream text. */
   .mini {
     position: fixed;
     inset: 0;
@@ -32,7 +32,7 @@
     justify-items: center;
     gap: 0.35rem;
     padding: 0.5rem;
-    background: color-mix(in srgb, var(--accent) 22%, var(--bg));
+    background: var(--phase-bg);
     color: var(--text);
     transition: background 0.4s;
   }
@@ -41,13 +41,14 @@
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--text);
   }
   .time {
+    font-family: var(--font-display);
     font-size: 3rem;
-    font-weight: 300;
+    font-weight: 400;
     line-height: 1;
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: tabular-nums lining-nums;
   }
   .buttons {
     display: flex;

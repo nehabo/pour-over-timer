@@ -1,4 +1,4 @@
-# Focus Timer
+# Pour Over
 
 A minimal, browser-only Pomodoro timer for Chrome. No backend, no accounts.
 

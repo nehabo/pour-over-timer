@@ -1,22 +1,23 @@
-/* ---------- Tokens ---------- */
+/* ---------- Tokens: dark earth tones, café in the evening ---------- */
 :root {
   color-scheme: dark;
 
-  --bg: #14161b;
-  --surface: #1c1f26;
-  --surface-2: #262a33;
-  --border: #323743;
-  --text: #e8e6e1;
-  --text-muted: #8d93a0;
+  --bg: #1c1814; /* dark soil */
+  --surface: #29231d; /* walnut */
+  --surface-2: #332b24; /* hover / pressed walnut */
+  --border: #3a3129;
+  --text: #efe6d8; /* cream */
+  --text-muted: #b5a893; /* sand */
+  --accent: #c98a4b; /* caramel */
+  --accent-2: #8a9a6e; /* sage: break-phase accents */
+  --on-accent: #1c1814;
+  --focus-ring: #efe6d8;
+  --phase-focus: #2b1d16; /* deep roast: PiP during focus */
+  --phase-break: #232a21; /* dark moss: PiP during breaks */
 
-  /* Accent per phase; [data-phase] below picks one. */
-  --accent-focus: #e9a17a;
-  --accent-short: #7fc4a8;
-  --accent-long: #8fb0e6;
-  --accent: var(--accent-focus);
-  --on-accent: #14161b;
-
-  --focus-ring: #f3d08a;
+  /* Accent for things that follow the phase (start button, phase label, cups, progress). */
+  --phase-accent: var(--accent);
+  --phase-bg: var(--phase-focus);
 
   --radius: 12px;
   --radius-pill: 999px;
@@ -27,6 +28,7 @@
   --space-6: 2rem;
 
   --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
 
   font-family: var(--font);
   line-height: 1.5;
@@ -35,14 +37,10 @@
   -webkit-font-smoothing: antialiased;
 }
 
-[data-phase='focus'] {
-  --accent: var(--accent-focus);
-}
-[data-phase='shortBreak'] {
-  --accent: var(--accent-short);
-}
+[data-phase='shortBreak'],
 [data-phase='longBreak'] {
-  --accent: var(--accent-long);
+  --phase-accent: var(--accent-2);
+  --phase-bg: var(--phase-break);
 }
 
 /* ---------- Base ---------- */
@@ -55,9 +53,11 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--bg);
   display: flex;
   align-items: center;
+  background-color: var(--bg);
+  /* Very light paper grain (about 4% opacity), drawn under the content. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.94 0 0 0 0 0.9 0 0 0 0 0.85 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
 }
 
 #app {
@@ -108,13 +108,13 @@ select {
   cursor: not-allowed;
 }
 .btn.primary {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--phase-accent);
+  border-color: var(--phase-accent);
   color: var(--on-accent);
   font-weight: 600;
 }
 .btn.primary:hover:not(:disabled) {
-  background: var(--accent);
+  background: var(--phase-accent);
   filter: brightness(1.08);
 }
 .btn.ghost {

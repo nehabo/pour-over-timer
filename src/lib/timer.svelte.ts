@@ -1,7 +1,7 @@
 import { ensureAudio, getAudio, setAmbient, setVolume } from './audio/engine';
 import { playChime, scheduleChime, type ChimeHandle } from './audio/chime';
 import { formatMs } from './format';
-import { durationsFor, PHASE_LABEL, type Durations, type Phase, type PresetId } from './presets';
+import { durationsFor, TITLE_LABEL, type Durations, type Phase, type PresetId } from './presets';
 import { settings } from './settings.svelte';
 
 export type { Phase };
@@ -168,7 +168,7 @@ export const timer = new Timer();
  * Called once from main.ts (kept out of the constructor so unit tests stay DOM-free).
  */
 export function initTimerEffects(): () => void {
-  const baseTitle = document.title;
+  const baseTitle = document.title; // "Pour Over", from index.html
   const onVisibility = () => timer.tick();
   document.addEventListener('visibilitychange', onVisibility);
 
@@ -176,7 +176,7 @@ export function initTimerEffects(): () => void {
     $effect(() => {
       document.title =
         timer.status === 'running'
-          ? `${formatMs(timer.remaining)} · ${PHASE_LABEL[timer.phase]}`
+          ? `${formatMs(timer.remaining)} · ${TITLE_LABEL[timer.phase]}`
           : baseTitle;
     });
 

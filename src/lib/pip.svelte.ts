@@ -20,21 +20,27 @@ export const pip = $state({ open: false });
 let pipWindow: Window | null = null;
 let app: ReturnType<typeof mount> | null = null;
 
-/** Copy every stylesheet into the PiP document so the mini view is styled. */
+/**
+ * Copy every stylesheet into the PiP document so the mini view is styled.
+ * Linked sheets (the production CSS file) are re-linked by absolute URL, so relative
+ * url()s inside them, like the self-hosted font, still resolve. Inline <style> sheets
+ * (Vite dev) are copied rule by rule.
+ */
 function copyStyles(target: Document) {
   for (const sheet of Array.from(document.styleSheets)) {
+    if (sheet.href) {
+      const link = target.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = sheet.href;
+      target.head.appendChild(link);
+      continue;
+    }
     try {
       const style = target.createElement('style');
       style.textContent = Array.from(sheet.cssRules, (rule) => rule.cssText).join('\n');
       target.head.appendChild(style);
     } catch {
-      // Cross-origin sheet: rules aren't readable, so link to it instead.
-      if (sheet.href) {
-        const link = target.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = sheet.href;
-        target.head.appendChild(link);
-      }
+      // Unreadable sheet with no URL: nothing we can copy.
     }
   }
 }
@@ -58,7 +64,7 @@ export async function togglePip(): Promise<void> {
     return;
   }
   pipWindow = win;
-  win.document.title = 'Focus Timer';
+  win.document.title = 'Pour Over';
   copyStyles(win.document);
 
   // Same JS context as the main page, so MiniTimer reads the same timer store: no messaging needed.

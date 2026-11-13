@@ -1,11 +1,9 @@
 <script lang="ts">
-  import { timer, LONG_BREAK_EVERY } from '../lib/timer.svelte';
+  import { timer } from '../lib/timer.svelte';
   import { formatMs } from '../lib/format';
-  import { PHASE_LABEL } from '../lib/presets';
+  import { IDLE_HINT, PHASE_LABEL } from '../lib/presets';
+  import SessionCups from './SessionCups.svelte';
 
-  const dots = $derived(
-    Array.from({ length: LONG_BREAK_EVERY }, (_, i) => i < timer.completedFocus),
-  );
   // Announced politely, and it changes only once a minute, not every second.
   const announcement = $derived(
     `${PHASE_LABEL[timer.phase]}: ${timer.minutesLeft} ${timer.minutesLeft === 1 ? 'minute' : 'minutes'} left`,
@@ -15,11 +13,7 @@
 <section class="display">
   <div class="phase-row">
     <span class="phase">{PHASE_LABEL[timer.phase]}</span>
-    <span class="dots" aria-label="{timer.completedFocus} of {LONG_BREAK_EVERY} focus sessions done">
-      {#each dots as filled, i (i)}
-        <span class="dot" class:filled aria-hidden="true"></span>
-      {/each}
-    </span>
+    <SessionCups />
   </div>
 
   <div class="time" aria-hidden="true">{formatMs(timer.remaining)}</div>
@@ -28,6 +22,8 @@
   <div class="bar" aria-hidden="true">
     <div class="fill" style:transform="scaleX({timer.progress})"></div>
   </div>
+
+  <p class="hint" class:hidden={timer.status !== 'idle'}>{IDLE_HINT}</p>
 </section>
 
 <style>
@@ -40,47 +36,43 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    color: var(--text-muted);
+  }
+  .phase {
+    color: var(--phase-accent);
     font-size: 0.95rem;
+    font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
-  .phase {
-    color: var(--accent);
-    font-weight: 600;
-  }
-  .dots {
-    display: inline-flex;
-    gap: 6px;
-  }
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    border: 1.5px solid var(--text-muted);
-  }
-  .dot.filled {
-    background: var(--accent);
-    border-color: var(--accent);
-  }
   .time {
+    font-family: var(--font-display);
     font-size: clamp(4.5rem, 20vw, 8rem);
-    font-weight: 300;
-    font-variant-numeric: tabular-nums;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums lining-nums;
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
   .bar {
     width: min(320px, 100%);
     height: 4px;
     border-radius: 2px;
-    background: var(--surface-2);
+    background: var(--surface);
     overflow: hidden;
   }
   .fill {
     height: 100%;
-    background: var(--accent);
+    background: var(--phase-accent);
     transform-origin: left;
     transition: transform 0.25s linear;
+  }
+  .hint {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  /* Keep the line's space so the layout doesn't jump when the timer starts. */
+  .hint.hidden {
+    visibility: hidden;
   }
 </style>

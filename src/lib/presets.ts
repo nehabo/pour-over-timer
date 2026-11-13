@@ -28,11 +28,22 @@ export const CUSTOM_RANGES: Record<Phase, { min: number; max: number }> = {
   longBreak: { min: 1, max: 60 },
 };
 
+/** On-screen phase names (café copy). Internal phase ids stay focus / shortBreak / longBreak. */
 export const PHASE_LABEL: Record<Phase, string> = {
-  focus: 'Focus',
-  shortBreak: 'Short break',
-  longBreak: 'Long break',
+  focus: 'Brewing',
+  shortBreak: 'Take a sip',
+  longBreak: 'Refill',
 };
+
+/** Shorter names for the tab title: "mm:ss · Brewing" or "mm:ss · Break". */
+export const TITLE_LABEL: Record<Phase, string> = {
+  focus: 'Brewing',
+  shortBreak: 'Break',
+  longBreak: 'Break',
+};
+
+/** Shown while the timer is idle. */
+export const IDLE_HINT = 'Grab a seat';
 
 /** Durations for a preset id; 'custom' uses the given custom values. */
 export function durationsFor(preset: PresetId, custom: Durations): Durations {

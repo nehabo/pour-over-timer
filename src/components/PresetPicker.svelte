@@ -92,7 +92,7 @@
   }
   .chip {
     border: 1px solid var(--border);
-    background: transparent;
+    background: var(--surface);
     color: var(--text-muted);
     border-radius: var(--radius-pill);
     padding: 0.4rem 0.95rem;
